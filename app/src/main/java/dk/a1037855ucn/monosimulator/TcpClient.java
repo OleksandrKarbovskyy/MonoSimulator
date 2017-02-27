@@ -15,7 +15,7 @@ import java.net.Socket;
 
 public class TcpClient {
 
-    private String mServerName = "192.168.0.7";// ip address of mono board
+    private String mServerName = "192.168.137.159";// ip address of mono board
 
     private int mServerPort = 7913;//port on the mono board
 
