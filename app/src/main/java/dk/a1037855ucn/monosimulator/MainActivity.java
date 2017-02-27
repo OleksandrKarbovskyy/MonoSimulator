@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private TcpClient client = null;
     private ListView tempList = null;
     Context context = MainActivity.this;
-
+    //ArrayList<String> tData = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         mButtonSend.setEnabled(false);
         mButtonClose.setEnabled(false);
-         ArrayList<String> tData = new ArrayList<String>();
+
 
 
         mButtonOpen.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void updateListView(ArrayList<String> tList) {
 
-        ArrayAdapter<String> tAdapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, tList);
-        tempList.setAdapter(tAdapter);
-    }
 
     private class DataSendReceive extends AsyncTask<String, Void, ArrayList<String>> {
         private String responce;
@@ -128,12 +123,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<String> result) {
             //Log.d("Text to display : ", result);
             //resText.setText(result);
-           // updateListView(result);
-           // ListView listView = (ListView) findViewById(R.id.topJokesList);
-           //tempList.getAdapter().notifyDataSetChanged();
-
-
-            ArrayAdapter<String> tAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, tData);
+             ArrayAdapter<String> tAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, tData);
             tempList.setAdapter(tAdapter);
 
         }
