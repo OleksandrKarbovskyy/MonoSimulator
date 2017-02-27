@@ -1,6 +1,5 @@
 package dk.a1037855ucn.monosimulator;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private Button mButtonClose = null;
     private TextView resText = null;
     private TcpClient client = null;
-    private ListView tempList = null;
-    Context context = MainActivity.this;
+    //private ListView tempList = null;
+   // Context context = MainActivity.this;
     //ArrayList<String> tData = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonSend = (Button) findViewById(R.id.button_send_connection);
         mButtonClose = (Button) findViewById(R.id.button_close_connection);
         resText = (TextView) findViewById(R.id.textView);
-        tempList = (ListView) findViewById(R.id.listViewTemp);
+       // tempList = (ListView) findViewById(R.id.listViewTemp);
 
         mButtonSend.setEnabled(false);
         mButtonClose.setEnabled(false);
@@ -98,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
         private String responce;
         private ArrayList<String> tData = new ArrayList<String>();
 
-
-
-        @Override
+ @Override
         protected ArrayList<String> doInBackground(String... params) {
             String req = params[0];
             try {
@@ -111,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     tData.add(responce);
                 }
 
-                Log.d("Received from mono : ", responce);
+                Log.d("Received from mono : ", String.valueOf(tData.size()));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -123,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<String> result) {
             //Log.d("Text to display : ", result);
             //resText.setText(result);
-             ArrayAdapter<String> tAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, tData);
+             ArrayAdapter<String> tAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, result);
+            ListView tempList = (ListView)findViewById(R.id.listViewTemp);
             tempList.setAdapter(tAdapter);
-
         }
     }
 }
