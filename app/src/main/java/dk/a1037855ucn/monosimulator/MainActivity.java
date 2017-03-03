@@ -5,22 +5,26 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button mButtonOpen = null;
     private Button mButtonSend = null;
     private Button mButtonClose = null;
-    private TextView resText = null;
+    private TextView resMin = null;
+    private TextView resAvr = null;
+    private TextView resMax = null;
+
     private TcpClient client = null;
-    //private ListView tempList = null;
-   // Context context = MainActivity.this;
+    private ListView tempList = null;
+
+    // Context context = MainActivity.this;
     //ArrayList<String> tData = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +34,13 @@ public class MainActivity extends AppCompatActivity {
         mButtonOpen = (Button) findViewById(R.id.button_open_connection);
         mButtonSend = (Button) findViewById(R.id.button_send_connection);
         mButtonClose = (Button) findViewById(R.id.button_close_connection);
-        resText = (TextView) findViewById(R.id.textView);
-       // tempList = (ListView) findViewById(R.id.listViewTemp);
+        resMin = (TextView) findViewById(R.id.textView_min);
+        resAvr = (TextView) findViewById(R.id.textView_avr);
+        resMax = (TextView) findViewById(R.id.textView_max);
+        tempList = (ListView) findViewById(R.id.listViewTemp);
 
         mButtonSend.setEnabled(false);
         mButtonClose.setEnabled(false);
-
 
 
         mButtonOpen.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                String arg = "*t<cr><lf>";
                 DataSendReceive dsr = new DataSendReceive();
-                dsr.execute("*t<cr><lf>");
+                dsr.execute(arg);
             }
         });
 
@@ -88,41 +94,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
 
-
-    private class DataSendReceive extends AsyncTask<String, Void, ArrayList<String>> {
+    private class DataSendReceive extends AsyncTask<String, Void, String> {
         private String responce;
-        private ArrayList<String> tData = new ArrayList<String>();
+        private ArrayList<Float> tData = new ArrayList<>();
 
- @Override
-        protected ArrayList<String> doInBackground(String... params) {
-            String req = params[0];
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            String par = params[0];
             try {
-
-                for (int i = 0; i < 10; i++) {
-                    client.sendData(req.getBytes());
-                    responce = client.getData();
-                    tData.add(responce);
-                }
-
-                Log.d("Received from mono : ", String.valueOf(tData.size()));
+                client.sendData(par.getBytes());
+                responce = client.getData();
+                Log.d("Received from mono : ", responce);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return tData;
+            return responce;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> result) {
-            //Log.d("Text to display : ", result);
-            //resText.setText(result);
-             ArrayAdapter<String> tAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, result);
-            ListView tempList = (ListView)findViewById(R.id.listViewTemp);
-            tempList.setAdapter(tAdapter);
+        protected void onPostExecute(String result) {
+                        //fil up the array of temperature without t for building graph
+            String t = result.replace("t", "");
+            Log.d("Text to display : ", t);
+
+            for (int i = 0; i < 10; i++) {
+               tData.add(Float.valueOf(result.replace("t", "")) + i);
+            }
+
+             resMin.setText(Collections.min(tData).toString());
+             resAvr.setText(getAvr());
+             resMax.setText(Collections.max(tData).toString());
         }
+
+        private String getAvr() {
+
+            float sum = 0;
+            float avr = 0;
+            for (Float f : tData) {
+                sum += f;
+            }
+            return String.valueOf(sum / tData.size());
+        }
+
+
     }
 }

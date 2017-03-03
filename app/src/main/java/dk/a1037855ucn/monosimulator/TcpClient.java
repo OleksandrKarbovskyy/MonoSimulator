@@ -15,13 +15,14 @@ import java.net.Socket;
 
 public class TcpClient {
 
-    private String mServerName = "192.168.137.159";// ip address of mono board
+    private String mServerName = "192.168.137.1";// ip address of mono board
 
     private int mServerPort = 7913;//port on the mono board
 
     private Socket mSocket = null;
 
-    public TcpClient() {}
+    public TcpClient() {
+    }
 
     public void openConnection() throws Exception {
 
@@ -30,10 +31,10 @@ public class TcpClient {
 
         try {
 
-            mSocket = new Socket(mServerName,mServerPort);
+            mSocket = new Socket(mServerName, mServerPort);
 
         } catch (IOException e) {
-            throw new Exception("Unable to create socket: "+e.getMessage());
+            throw new Exception("Unable to create socket: " + e.getMessage());
         }
     }
 
@@ -51,7 +52,7 @@ public class TcpClient {
             }
 
         }
-       // mSocket = null;
+        // mSocket = null;
     }
 
     public void sendData(byte[] data) throws Exception {
@@ -63,21 +64,20 @@ public class TcpClient {
 
 
         try {
-            OutputStream os =  mSocket.getOutputStream();
-            if (os != null ){
+            OutputStream os = mSocket.getOutputStream();
+            if (os != null) {
 
                 os.write(data);
                 Log.d("OutputStream : ", os.toString());
                 os.flush();
-
             }
 
         } catch (IOException e) {
-            throw new Exception("Unable to send data: "+e.getMessage());
+            throw new Exception("Unable to send data: " + e.getMessage());
         }
     }
 
-    public String getData () throws Exception {
+    public String getData() throws Exception {
 
         InputStream inputStream = null;
         BufferedReader br = null;
@@ -86,8 +86,7 @@ public class TcpClient {
         try {
             inputStream = mSocket.getInputStream();
 
-            if(inputStream != null)
-            {
+            if (inputStream != null) {
                 String line = "";
                 try {
                     br = new BufferedReader(new InputStreamReader(inputStream));
@@ -107,23 +106,18 @@ public class TcpClient {
                         }
                     }
                 }
-                data =  line;
-            }
-            else
-            {
-                data =  "";
+                data = line;
+            } else {
+                data = "";
             }
 
-        }
+        } catch (IOException e) {
 
-        catch (IOException e) {
-
-            throw new Exception("Unable to read data: "+e.getMessage());
+            throw new Exception("Unable to read data: " + e.getMessage());
         }
-        Log.d ("Data received : ", data );
+        Log.d("Data received : ", data);
         closeConnection();
-        return  data;
-
+        return data;
     }
 
     @Override
@@ -131,5 +125,4 @@ public class TcpClient {
         super.finalize();
         closeConnection();
     }
-
 }
