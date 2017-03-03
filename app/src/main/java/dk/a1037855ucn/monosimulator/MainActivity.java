@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,10 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView resMax = null;
 
     private TcpClient client = null;
-    private ListView tempList = null;
 
-    // Context context = MainActivity.this;
-    //ArrayList<String> tData = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         resMin = (TextView) findViewById(R.id.textView_min);
         resAvr = (TextView) findViewById(R.id.textView_avr);
         resMax = (TextView) findViewById(R.id.textView_max);
-        tempList = (ListView) findViewById(R.id.listViewTemp);
+
 
         mButtonSend.setEnabled(false);
         mButtonClose.setEnabled(false);
@@ -127,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
                tData.add(Float.valueOf(result.replace("t", "")) + i);
             }
 
-             resMin.setText(Collections.min(tData).toString());
-             resAvr.setText(getAvr());
-             resMax.setText(Collections.max(tData).toString());
+             resMin.setText("Min temperature : " + Collections.min(tData).toString());
+             resAvr.setText("Average temperature : " + getAvr());
+             resMax.setText("Max temperature : " + Collections.max(tData).toString());
         }
 
         private String getAvr() {

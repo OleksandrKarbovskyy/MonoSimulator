@@ -16,6 +16,7 @@ import java.net.Socket;
 public class TcpClient {
 
     private String mServerName = "192.168.137.1";// ip address of mono board
+    //private String mServerName = "192.168.56.1";// ip address of mono board
 
     private int mServerPort = 7913;//port on the mono board
 
@@ -106,7 +107,7 @@ public class TcpClient {
                         }
                     }
                 }
-                data = line;
+                data = sb.toString();
             } else {
                 data = "";
             }
