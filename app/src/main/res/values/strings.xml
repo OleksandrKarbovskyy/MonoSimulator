@@ -5,7 +5,5 @@
     <string name="close">Close</string>
     <string name="makeGraph">Graph</string>
     <string name="getData">Get Data</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="temp">Temperature</string>
 </resources>

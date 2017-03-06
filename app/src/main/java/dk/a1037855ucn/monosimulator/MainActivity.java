@@ -1,22 +1,22 @@
 package dk.a1037855ucn.monosimulator;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
-import org.achartengine.chart.XYChart;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -32,15 +32,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView resMin = null;
     private TextView resAvr = null;
     private TextView resMax = null;
-    private int plotCounter = 0;
     private LinearLayout graphLayout;
-    private XYChart myChart;
     private GraphicalView myChart2;
 
     private ResultContainer con = ResultContainer.getInstance();
     private TcpClient client = null;
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
         resMin = (TextView) findViewById(R.id.textView_min);
         resAvr = (TextView) findViewById(R.id.textView_avr);
         resMax = (TextView) findViewById(R.id.textView_max);
+        int textColor = getColor(R.color.textWhite);
+        resMin.setTextColor(textColor);
+        resAvr.setTextColor(textColor);
+        resMax.setTextColor(textColor);
+
         graphLayout = (LinearLayout) findViewById(R.id.chart);
 
         mButtonSend.setEnabled(false);
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 initilizeGraph();
+                graphLayout.removeAllViews();
                 graphLayout.addView(myChart2);
             }
         });
@@ -105,17 +111,18 @@ public class MainActivity extends AppCompatActivity {
         ResultContainer con = ResultContainer.getInstance();
         //ArrayList<Float> tData = con.getResultData();
         DataSendReceive dsr = new DataSendReceive();
-        TimeSeries series = new TimeSeries("Line1");
+        TimeSeries series = new TimeSeries(getString(R.string.temp));
+
         for (int i = 0; i < dsr.getTdata().size(); i++ ){
             double y = new Double(dsr.getTdata().get(i).toString());
-            series.add(plotCounter+1,y);
-            plotCounter++;
+            series.add(i+1,y);
         }
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         dataset.addSeries(series);
 
         XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
         XYSeriesRenderer renderer = new XYSeriesRenderer();
+        setXYSeriesRendererDisplay(renderer);
         mRenderer.addSeriesRenderer(renderer);
 
         // Disable panning
@@ -127,7 +134,44 @@ public class MainActivity extends AppCompatActivity {
 
         mRenderer.setXAxisMax(15);
         mRenderer.setXAxisMin(0);
+        setMultiRendererDisplay(mRenderer);
         myChart2 = ChartFactory.getLineChartView(this, dataset, mRenderer);
+    }
+
+    //Display of the Line
+    private void setXYSeriesRendererDisplay(XYSeriesRenderer renderer){
+        renderer.setDisplayChartValues(true);
+        renderer.setChartValuesTextSize(24);
+        renderer.setColor(Color.YELLOW);
+
+    }
+
+    //Display settings for the layout and grid.
+    private void setMultiRendererDisplay(XYMultipleSeriesRenderer renderer) {
+        //Shared
+        renderer.setLabelsColor(Color.RED);
+        renderer.setAxisTitleTextSize(24);
+        renderer.setLabelsTextSize(24);
+        renderer.setBackgroundColor(Color.BLACK);
+        renderer.setApplyBackgroundColor(true);
+        renderer.setShowGrid(true);
+
+        //Title
+        renderer.setChartTitle("Mono Temperature Reader");
+        renderer.setChartTitleTextSize(24);
+
+        //Y-axis
+        renderer.setYTitle("Temperature");
+        renderer.setYLabels(5);
+        renderer.setYAxisColor(Color.WHITE);
+
+        //X-axis
+        renderer.setXTitle("Readings");
+        renderer.setXLabels(10);
+        renderer.setXAxisColor(Color.WHITE);
+
+        //Graph
+        renderer.setPointSize(5f);
     }
 
     private void sleepNow(){
