@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private Button mButtonOpen = null;
     private Button mButtonSend = null;
     private Button mButtonClose = null;
-    private Button mButtonGetData;
     private Button mButtonMakeGraph;
     private TextView resMin = null;
     private TextView resAvr = null;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         mButtonOpen = (Button) findViewById(R.id.button_open_connection);
         mButtonSend = (Button) findViewById(R.id.button_send_connection);
         mButtonClose = (Button) findViewById(R.id.button_close_connection);
-        mButtonGetData = (Button) findViewById(R.id.getData);
         mButtonMakeGraph = (Button) findViewById(R.id.btn_MakeGraph);
         resMin = (TextView) findViewById(R.id.textView_min);
         resAvr = (TextView) findViewById(R.id.textView_avr);
@@ -91,18 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 mButtonOpen.setEnabled(true);
                 mButtonSend.setEnabled(false);
                 mButtonClose.setEnabled(false);
-            }
-        });
-
-        mButtonGetData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createThreadOpenConnection();
-                sleepNow();
-                callDataSendRecive();
-                sleepNow();
-                client.closeConnection();
-
             }
         });
 
