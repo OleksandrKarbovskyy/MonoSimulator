@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MonoSimulator</string>
+    <string name="open">Open</string>
+    <string name="get">Send</string>
+    <string name="close">Close</string>
+    <string name="makeGraph">Graph</string>
+    <string name="getData">Get Data</string>
+    <string name="temp">Temperature</string>
 </resources>
