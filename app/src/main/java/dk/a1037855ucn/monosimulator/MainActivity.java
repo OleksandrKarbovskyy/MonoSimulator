@@ -19,6 +19,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ResultContainer con = ResultContainer.getInstance();
     private TcpClient client = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initilizeGraph(){
         ResultContainer con = ResultContainer.getInstance();
-        ArrayList<Float> tData = con.getResultData();
+        //ArrayList<Float> tData = con.getResultData();
+        DataSendReceive dsr = new DataSendReceive();
         TimeSeries series = new TimeSeries("Line1");
-        for (int i = 0; i < tData.size(); i++ ){
-            double y = new Double(tData.get(i).toString());
+        for (int i = 0; i < dsr.getTdata().size(); i++ ){
+            double y = new Double(dsr.getTdata().get(i).toString());
             series.add(plotCounter+1,y);
             plotCounter++;
         }
@@ -133,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
         mRenderer.setPanEnabled(false);
 
         // Set Y-Axis range
-        mRenderer.setYAxisMax(30);
+        mRenderer.setYAxisMax(50);
         mRenderer.setYAxisMin(0);
 
-        mRenderer.setXAxisMax(20);
+        mRenderer.setXAxisMax(15);
         mRenderer.setXAxisMin(0);
         myChart2 = ChartFactory.getLineChartView(this, dataset, mRenderer);
     }
@@ -181,12 +184,13 @@ public class MainActivity extends AppCompatActivity {
 
     private class DataSendReceive extends AsyncTask<String, Void, String> {
         private String responce;
-        private ResultContainer con = ResultContainer.getInstance();
-        private ArrayList<Float> tData;
+        //private ResultContainer con = ResultContainer.getInstance();
+        private ArrayList<Float> tData = new ArrayList<>();
 
         public DataSendReceive() {
             tData = con.getResultData();
         }
+
 
         @Override
         protected String doInBackground(String... params) {
@@ -208,13 +212,23 @@ public class MainActivity extends AppCompatActivity {
             //fil up the array of temperature without t for building graph
             if (result != null) {
                 String t = result.replace("t", "");
-                tData.add(Float.valueOf(t));
+                for (int i = 0; i<10; i++){
+                    tData.add(randTemp());
+                }
+
                 Log.d("Text to display : ", t);
 
                 resMin.setText("Min temperature : " + Collections.min(tData).toString());
-                resAvr.setText("Average temperature : " + getAvr());
+                resAvr.setText("Temperature now : " + t);
                 resMax.setText("Max temperature : " + Collections.max(tData).toString());
             }
+        }
+
+        private float randTemp (){
+            Random rand = new Random();
+            int randomNum = rand.nextInt(50-5) + 5;
+
+            return randomNum;
         }
 
         private String getAvr() {
@@ -223,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
                 sum += f;
             }
             return String.valueOf(sum / tData.size());
+        }
+        public ArrayList<Float> getTdata (){
+            return tData;
         }
     }
 }
